@@ -1,6 +1,9 @@
 import 'dotenv/config';
 import express from "express";
 import session from "express-session";
+import FileStore from "session-file-store";
+
+const FileStoreInstance = FileStore(session);
 import bcrypt from "bcryptjs";
 import http from "http";
 import path from "path";
@@ -44,11 +47,16 @@ const SESSION_SECRET = process.env.SESSION_SECRET || "wasender-session-secret-20
 
 // Session configuration
 app.use(session({
+    store: new FileStoreInstance({
+        path: path.join('/tmp', 'sessions'),
+        ttl: 86400, // 1 day
+        reapInterval: 86400 // 1 day
+    }),
 	secret: SESSION_SECRET,
 	resave: false,
 	saveUninitialized: false,
 	cookie: {
-		secure: false, // Disable secure cookies for Railway compatibility
+		secure: true, // Set to true for HTTPS
 		httpOnly: true,
 		maxAge: 24 * 60 * 60 * 1000, // 24 hours
 		sameSite: 'lax' // Add sameSite for better compatibility
