@@ -25,7 +25,8 @@ dayjs.extend(timezone);
 dayjs.tz.setDefault("Asia/Colombo"); // Sri Lanka timezone (UTC+5:30)
 import { GoogleGenAI } from "@google/genai";
 import { getSheet } from './googleSheet.js';
-import makeWASocket, { useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, jidNormalizedUser, downloadMediaMessage } from "@whiskeysockets/baileys";
+import { useGoogleSheetAuthState } from './googleSheetAuthState.js';
+import makeWASocket, { fetchLatestBaileysVersion, DisconnectReason, jidNormalizedUser, downloadMediaMessage } from "@whiskeysockets/baileys";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,13 +43,7 @@ const io = new SocketIOServer(server, { cors: { origin: "*" } });
 
 
 
-const DATA_DIR = path.join("/tmp", "data");
-const PUBLIC_DIR = path.join(__dirname, "..", "public");
-const UPLOADS_DIR = path.join("/tmp", "uploads");
 
-for (const d of [DATA_DIR, PUBLIC_DIR, UPLOADS_DIR]) {
-	if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
-}
 
 
 
