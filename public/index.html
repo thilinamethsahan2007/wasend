@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WaSender Personal Bot</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .card h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #e2e8f0;
+        }
+
+        .btn {
+            background: rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn:hover {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: rgba(59, 130, 246, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(107, 114, 128, 0.3);
+            border-color: rgba(107, 114, 128, 0.5);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(107, 114, 128, 0.5);
+            border-color: rgba(107, 114, 128, 0.7);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.3);
+            border-color: rgba(239, 68, 68, 0.5);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.5);
+            border-color: rgba(239, 68, 68, 0.7);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-success {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-success:hover {
+            background: rgba(16, 185, 129, 0.5);
+            border-color: rgba(16, 185, 129, 0.7);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #f1f5f9;
+            transition: all 0.2s;
+        }
+        
+        .input::placeholder {
+            color: #94a3b8;
+        }
+
+        .input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Select dropdown styling */
+        select {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        select option {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 8px;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* File input styling */
+        .input[type="file"] {
+            padding: 10px;
+            background: rgba(59, 130, 246, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.1);
+        }
+        
+        .input[type="file"]:hover {
+            background: rgba(59, 130, 246, 0.25);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .input[type="file"]::file-selector-button {
+            padding: 8px 16px;
+            background: rgba(59, 130, 246, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.6);
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 12px;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .input[type="file"]::file-selector-button:hover {
+            background: rgba(59, 130, 246, 0.6);
+            border-color: rgba(59, 130, 246, 0.8);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #f1f5f9;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.2s;
+        }
+        
+        .textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        .textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .grid-4 {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        .flex {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .flex-end {
+            justify-content: flex-end;
+        }
+
+        .status-connected {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .status-disconnected {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .status-connecting {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .summary-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+
+        .summary-item {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .reply-section {
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            font-size: 14px;
+            color: #f1f5f9;
+            margin-bottom: 8px;
+            resize: vertical;
+            min-height: 40px;
+        }
+        
+        .reply-input::placeholder {
+            color: #94a3b8;
+        }
+
+        .reply-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .reply-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .reply-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .reply-btn-send {
+            background: rgba(59, 130, 246, 0.3);
+            border-color: rgba(59, 130, 246, 0.5);
+            color: white;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+        }
+
+        .reply-btn-send:hover {
+            background: rgba(59, 130, 246, 0.5);
+            border-color: rgba(59, 130, 246, 0.7);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .quick-reply-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .quick-reply-btn:hover {
+            background: rgba(16, 185, 129, 0.5);
+            border-color: rgba(16, 185, 129, 0.7);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .quick-reply-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+        }
+
+        .reply-btn-cancel {
+            background: rgba(107, 114, 128, 0.3);
+            border-color: rgba(107, 114, 128, 0.5);
+            color: white;
+            box-shadow: 0 2px 8px rgba(107, 114, 128, 0.2);
+        }
+
+        .reply-btn-cancel:hover {
+            background: rgba(107, 114, 128, 0.5);
+            border-color: rgba(107, 114, 128, 0.7);
+            box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+        }
+
+        .reply-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .queue-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+        }
+
+        .birthday-item {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fbbf24;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #3b82f6;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(203, 213, 225, 0.8);
+            font-size: 12px;
+        }
+        
+        label {
+            color: #e2e8f0;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contact-list-box {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .contact-item input[type="checkbox"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+        }
+
+        .contact-item label {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            flex-grow: 1;
+        }
+        .contact-item .contact-name {
+            font-weight: 500;
+            color: #f1f5f9;
+        }
+        .contact-item .contact-phone {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        @media (max-width: 768px) {
+            .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header with Logout Button -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="color: #f1f5f9; font-size: 32px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">
+                🤖 WaSender Personal Bot
+            </h1>
+            <button class="btn btn-danger" id="logoutBtn" style="width: auto;">
+                🔒 Logout
+            </button>
+        </div>
+
+
+
+        <!-- 2. Bot Control Center (Centered Row) -->
+        <div class="grid grid-3">
+            <!-- Bot Connection Card -->
+            <div class="card">
+                <h3>🤖 Bot Connection</h3>
+                <div style="text-align: center; margin-bottom: 16px;">
+                    <div id="connectionStatus" class="status-disconnected">🔴 Disconnected</div>
+                </div>
+                <div id="qrCode" style="text-align: center; margin-bottom: 16px;"></div>
+                <div class="flex" style="justify-content: center;">
+                    <button class="btn btn-success hidden" id="connectBtn">Connect</button>
+                    <button class="btn btn-danger hidden" id="disconnectBtn">Disconnect</button>
+                </div>
+            </div>
+
+            <!-- Typing Indicator Card -->
+            <div class="card">
+                <h3>✍️ Typing Indicator</h3>
+                <input type="text" id="typingNumber" class="input" placeholder="Enter phone number..." style="margin-bottom: 12px;">
+                <button class="btn" id="showTypingBtn">Show Typing</button>
+            </div>
+
+            <!-- Auto Status View Toggle -->
+            <div class="card">
+                <h3>👁 Auto-View Status</h3>
+                <div class="flex" style="align-items: center; gap: 12px;">
+                    <label class="toggle">
+                        <input type="checkbox" id="autoViewStatus">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="autoViewStatusText">Disabled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Message Scheduling Panel (Middle - Wide) -->
+        <div class="card">
+            <h2>⏰ Message Scheduler</h2>
+            
+            <!-- Schedule Form -->
+            <div class="grid grid-2" style="margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Recipients</label>
+                    <div class="flex" style="align-items: end; gap: 8px;">
+                        <textarea id="recipients" class="textarea" placeholder="Enter phone numbers or click Browse..." style="min-height: 80px; width: 100%;"></textarea>
+                        <button class="btn btn-secondary" id="browseContactsBtn" style="width: auto; white-space: nowrap;">👥 Browse</button>
+                    </div>
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Send At (Sri Lanka Time - UTC+5:30)</label>
+                    <input type="datetime-local" id="sendAt" class="input">
+                </div>
+            </div>
+
+            <!-- Media and Caption -->
+            <div class="grid grid-2" style="margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Media File</label>
+                    <input type="file" id="mediaFile" class="input" accept="image/*,video/*,audio/*,application/*">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Message</label>
+                    <textarea id="caption" class="textarea" placeholder="Enter your message..." style="min-height: 80px;"></textarea>
+                </div>
+            </div>
+
+
+
+            <!-- Action Buttons -->
+            <div class="flex flex-end">
+                <button class="btn btn-secondary" id="clearQueueBtn">Clear Queue</button>
+                <button class="btn" id="scheduleBtn">Schedule Message</button>
+            </div>
+
+            <!-- Queue Status -->
+            <div style="margin-top: 20px;">
+                <h3>📋 Message Queue</h3>
+                <div id="queueStatus" style="margin-bottom: 12px; font-weight: 500;">
+                    Queue: <span id="queueSize">0</span> messages pending
+                </div>
+                <div id="queueList" style="max-height: 200px; overflow-y: auto;">
+                    <div style="text-align: center; color: #6b7280; padding: 20px;">
+                        No messages in queue
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. Birthday Management Panel (Bottom) -->
+        <div class="card">
+            <h2>📇 Contact Management</h2>
+            <div class="grid grid-2" style="align-items: end;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Import Contacts from VCF</label>
+                    <input type="file" id="vcfImportFile" class="input" accept=".vcf">
+                    <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Upload a VCF file to save all contacts to your Google Sheet.</p>
+                </div>
+                <button class="btn" id="importVcfBtn">⬆️ Import to Google Sheets</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎉 Birthday Management</h2>
+            
+            <!-- Add Birthday Form -->
+            <div class="grid grid-4" style="margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Name</label>
+                    <input type="text" id="birthdayName" class="input" placeholder="Enter name">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Phone</label>
+                    <input type="text" id="birthdayPhone" class="input" placeholder="Enter phone">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Birthday</label>
+                    <input type="date" id="birthdayDate" class="input">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Gender</label>
+                    <select id="birthdayGender" class="input">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="margin-bottom: 20px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Relationship</label>
+                    <select id="birthdayRelationship" class="input">
+                        <option value="friend">Friend</option>
+                        <option value="relative">Relative</option>
+                        <option value="family">Family</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: end; gap: 8px;">
+                    <button class="btn btn-secondary" id="previewBirthdayMessageBtn">🔍 Preview Message</button>
+                    <button class="btn" id="addBirthdayBtn">Add Birthday</button>
+                </div>
+            </div>
+
+            <!-- Birthday Message Preview -->
+            <div id="birthdayMessagePreview" style="display: none; margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500; color: #e2e8f0;">
+                    Birthday Message (Edit if needed)
+                </label>
+                <textarea id="birthdayMessage" class="textarea" placeholder="AI-generated birthday message will appear here..." style="min-height: 100px;"></textarea>
+                <div style="margin-top: 8px; font-size: 12px; color: #94a3b8;">
+                    💡 This message will be sent automatically on their birthday at midnight (Sri Lanka time)
+                </div>
+            </div>
+
+            <!-- Birthday List -->
+            <div>
+                <h3>📅 Birthday List</h3>
+                <div id="birthdayList" style="max-height: 200px; overflow-y: auto;">
+                    <div style="text-align: center; color: #6b7280; padding: 20px;">
+                        No birthdays added yet
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div>Last Sync: <span id="lastSync">Never</span> | Version: 1.0.0 | Data: ./data/</div>
+        </div>
+    </div>
+
+    <!-- Contact Selector Modal -->
+    <div id="contactsModal" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <h2>Select Contacts</h2>
+            <input type="text" id="contactSearchInput" class="input" placeholder="Search by name or phone..." style="margin-bottom: 16px;">
+            <div id="modalContactList" class="contact-list-box">
+                <!-- Contacts will be loaded here -->
+            </div>
+            <div class="flex flex-end" style="margin-top: 20px;">
+                <button class="btn btn-secondary" id="cancelContactsBtn">Cancel</button>
+                <button class="btn" id="addSelectedContactsBtn">Add Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+
+        // --- Contact Selector Modal Logic ---
+        const browseContactsBtn = document.getElementById('browseContactsBtn');
+        const contactsModal = document.getElementById('contactsModal');
+        const cancelContactsBtn = document.getElementById('cancelContactsBtn');
+        const addSelectedContactsBtn = document.getElementById('addSelectedContactsBtn');
+        const contactSearchInput = document.getElementById('contactSearchInput');
+        const modalContactList = document.getElementById('modalContactList');
+        let allContacts = []; // To store the fetched contacts
+
+        // Function to render the contact list in the modal
+        function renderContactList(contacts) {
+            if (contacts.length === 0) {
+                modalContactList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;">No contacts found.</div>';
+                return;
+            }
+            const html = contacts.map(contact => `
+                <div class="contact-item">
+                    <input type="checkbox" id="contact-${contact.id}" value="${contact.phone}" class="contact-checkbox">
+                    <label for="contact-${contact.id}">
+                        <span class="contact-name">${contact.name}</span>
+                        <span class="contact-phone">${contact.phone}</span>
+                    </label>
+                </div>
+            `).join('');
+            modalContactList.innerHTML = html;
+        }
+
+        // Open the modal and fetch contacts
+        browseContactsBtn.addEventListener('click', async () => {
+            contactsModal.classList.remove('hidden');
+            modalContactList.innerHTML = '<div style="text-align: center; color: #94a3b8; padding: 20px;">Loading contacts...</div>';
+            
+            try {
+                const response = await authenticatedFetch('/api/contacts');
+                if (!response) return;
+                allContacts = await response.json();
+                renderContactList(allContacts);
+            } catch (e) {
+                modalContactList.innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Failed to load contacts.</div>';
+            }
+        });
+
+        // Search functionality
+        contactSearchInput.addEventListener('keyup', () => {
+            const searchTerm = contactSearchInput.value.toLowerCase();
+            const filteredContacts = allContacts.filter(contact => 
+                contact.name.toLowerCase().includes(searchTerm) || 
+                contact.phone.toLowerCase().includes(searchTerm)
+            );
+            renderContactList(filteredContacts);
+        });
+
+        // Add selected contacts to the textarea
+        addSelectedContactsBtn.addEventListener('click', () => {
+            const selectedCheckboxes = document.querySelectorAll('.contact-checkbox:checked');
+            const selectedPhones = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+            if (selectedPhones.length > 0) {
+                const recipientsTextarea = document.getElementById('recipients');
+                const existingPhones = recipientsTextarea.value.trim();
+                const newPhones = selectedPhones.join(', ');
+                recipientsTextarea.value = existingPhones ? `${existingPhones}, ${newPhones}` : newPhones;
+            }
+            closeContactsModal();
+        });
+
+        // Close the modal
+        function closeContactsModal() {
+            contactsModal.classList.add('hidden');
+            contactSearchInput.value = ''; // Clear search
+        }
+        cancelContactsBtn.addEventListener('click', closeContactsModal);
+        // --- End of Contact Selector Modal Logic ---
+
+        let connectionStatus = { connected: false, isConnecting: false };
+
+        // Global fetch wrapper to handle authentication
+        async function authenticatedFetch(url, options = {}) {
+            try {
+                const response = await fetch(url, options);
+                
+                // Check if response is unauthorized
+                if (response.status === 401) {
+                    // Redirect to login page
+                    window.location.href = '/login.html';
+                    return null;
+                }
+                
+                return response;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+        }
+
+        // Socket event listeners
+        socket.on('connection:init', (data) => {
+            connectionStatus = data.status;
+            isConnecting = data.isConnecting;
+            updateConnectionStatus();
+            document.getElementById('queueSize').textContent = data.queueSize;
+            document.getElementById('autoViewStatus').checked = data.settings.autoViewStatus;
+            document.getElementById('autoViewStatusText').textContent = data.settings.autoViewStatus ? 'Enabled' : 'Disabled';
+        });
+
+        socket.on('connection:update', (data) => {
+            connectionStatus.connected = data.connected;
+            if (data.isConnecting !== undefined) {
+                isConnecting = data.isConnecting;
+            }
+            updateConnectionStatus();
+        });
+
+        socket.on('qr', (data) => {
+            document.getElementById('qrCode').innerHTML = `<img src="${data.qr}" style="max-width: 200px;">`;
+        });
+
+        socket.on('queue:update', (data) => {
+            document.getElementById('queueSize').textContent = data.size;
+        });
+
+        socket.on('settings:update', (data) => {
+            document.getElementById('autoViewStatus').checked = data.autoViewStatus;
+            document.getElementById('autoViewStatusText').textContent = data.autoViewStatus ? 'Enabled' : 'Disabled';
+        });
+
+        // Connection status update
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            const qrCode = document.getElementById('qrCode');
+
+            if (connectionStatus.connected) {
+                statusEl.textContent = '🟢 Connected';
+                statusEl.className = 'status-connected';
+                connectBtn.classList.add('hidden');
+                disconnectBtn.classList.remove('hidden');
+                qrCode.innerHTML = '';
+            } else if (connectionStatus.isConnecting) {
+                statusEl.textContent = '🟡 Connecting...';
+                statusEl.className = 'status-connecting';
+                connectBtn.classList.add('hidden');
+                disconnectBtn.classList.add('hidden');
+            } else {
+                statusEl.textContent = '🔴 Disconnected';
+                statusEl.className = 'status-disconnected';
+                connectBtn.classList.remove('hidden');
+                disconnectBtn.classList.add('hidden');
+                qrCode.innerHTML = '';
+            }
+        }
+
+        // Bot control functions
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            const response = await authenticatedFetch('/api/bot/connect', { method: 'POST' });
+            if (!response) return; // Redirected to login
+        });
+
+        document.getElementById('disconnectBtn').addEventListener('click', async () => {
+            const response = await authenticatedFetch('/api/bot/disconnect', { method: 'POST' });
+            if (!response) return; // Redirected to login
+        });
+
+        document.getElementById('showTypingBtn').addEventListener('click', () => {
+            const number = document.getElementById('typingNumber').value.trim();
+            if (!number) {
+                alert('Please enter a phone number');
+                return;
+            }
+            
+            authenticatedFetch('/api/bot/typing', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ number })
+            });
+        });
+
+        document.getElementById('autoViewStatus').addEventListener('change', async (e) => {
+            const response = await authenticatedFetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ autoViewStatus: e.target.checked })
+            });
+            if (!response) return; // Redirected to login
+        });
+
+        // Message scheduling
+        document.getElementById('scheduleBtn').addEventListener('click', async () => {
+            const recipients = document.getElementById('recipients').value.trim();
+            const caption = document.getElementById('caption').value.trim();
+            const sendAt = document.getElementById('sendAt').value;
+            const mediaFile = document.getElementById('mediaFile').files[0];
+
+            // Validation
+            if (!recipients) {
+                alert('Please enter recipients.');
+                return;
+            }
+
+            if (!caption && !mediaFile) {
+                alert('Please enter a caption or select a media file');
+                return;
+            }
+
+            if (!sendAt) {
+                alert('Please select a send time');
+                return;
+            }
+
+            // Prepare FormData
+            const formData = new FormData();
+            formData.append('recipients', recipients);
+            formData.append('caption', caption);
+            formData.append('sendAt', sendAt);
+            
+            if (mediaFile) {
+                formData.append('media', mediaFile);
+            }
+
+            // Send request
+            try {
+                const response = await authenticatedFetch('/api/schedule', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response) return; // Redirected to login
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ ${result.message || 'Message scheduled successfully!'}`);
+                    // Clear form
+                    document.getElementById('recipients').value = '';
+                    document.getElementById('caption').value = '';
+                    document.getElementById('sendAt').value = '';
+                    document.getElementById('mediaFile').value = '';
+                    loadQueue();
+                } else {
+                    alert('Failed to schedule message: ' + result.error);
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            }
+        });
+
+        document.getElementById('clearQueueBtn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to clear the message queue?')) return;
+            
+            try {
+                const response = await authenticatedFetch('/api/schedule/clear', { method: 'POST' });
+                if (!response) return; // Redirected to login
+                const result = await response.json();
+                if (result.success) {
+                    loadQueue();
+                } else {
+                    alert('Failed to clear queue');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        });
+
+        // Birthday management functions
+        document.getElementById('previewBirthdayMessageBtn').addEventListener('click', async () => {
+            const name = document.getElementById('birthdayName').value.trim();
+            const gender = document.getElementById('birthdayGender').value;
+            const relationship = document.getElementById('birthdayRelationship').value;
+
+            if (!name) {
+                alert('Please enter a name first');
+                return;
+            }
+
+            const previewBtn = document.getElementById('previewBirthdayMessageBtn');
+            const originalText = previewBtn.textContent;
+            previewBtn.disabled = true;
+            previewBtn.textContent = '⏳ Generating...';
+
+            try {
+                const response = await authenticatedFetch('/api/birthdays/preview-message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, gender, relationship })
+                });
+                if (!response) return; // Redirected to login
+
+                const result = await response.json();
+                if (result.success) {
+                    document.getElementById('birthdayMessage').value = result.message;
+                    document.getElementById('birthdayMessagePreview').style.display = 'block';
+                } else {
+                    alert('Failed to generate message: ' + result.error);
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            } finally {
+                previewBtn.disabled = false;
+                previewBtn.textContent = originalText;
+            }
+        });
+
+        document.getElementById('addBirthdayBtn').addEventListener('click', async () => {
+            const name = document.getElementById('birthdayName').value.trim();
+            const phone = document.getElementById('birthdayPhone').value.trim();
+            const birthday = document.getElementById('birthdayDate').value;
+            const gender = document.getElementById('birthdayGender').value;
+            const relationship = document.getElementById('birthdayRelationship').value;
+            const customMessage = document.getElementById('birthdayMessage').value.trim();
+
+            if (!name || !phone || !birthday) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const response = await authenticatedFetch('/api/birthdays', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, birthday, gender, relationship, customMessage })
+                });
+                if (!response) return; // Redirected to login
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Birthday added successfully!');
+                    document.getElementById('birthdayName').value = '';
+                    document.getElementById('birthdayPhone').value = '';
+                    document.getElementById('birthdayDate').value = '';
+                    document.getElementById('birthdayMessage').value = '';
+                    document.getElementById('birthdayMessagePreview').style.display = 'none';
+                    loadBirthdays();
+                } else {
+                    alert('Failed to add birthday: ' + result.error);
+                }
+            } catch (error) {
+                alert('Network error: ' + error.message);
+            }
+        });
+
+
+
+
+
+        // Queue loading function
+        async function loadQueue() {
+            try {
+                const response = await authenticatedFetch('/api/schedule');
+                if (!response) return; // Redirected to login
+                const schedule = await response.json();
+                const queueList = document.getElementById('queueList');
+                
+                const pendingMessages = schedule.filter(item => item.status === 'pending');
+                
+                if (pendingMessages.length === 0) {
+                    queueList.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 20px;">No messages in queue</div>';
+                    return;
+                }
+                
+                const html = pendingMessages.map(item => {
+                    const sendTime = new Date(item.sendAt).toLocaleString();
+                    return `
+                        <div class="queue-item">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 500; margin-bottom: 4px;">To: ${item.recipient}</div>
+                                    <div style="margin-bottom: 4px;">${item.text || '[Media Message]'}</div>
+                                    <div style="font-size: 12px; color: #6b7280;">Send at: ${sendTime}</div>
+                                </div>
+                                <div style="margin-left: 12px;">
+                                    <span style="background: #f59e0b; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">Pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                queueList.innerHTML = html;
+            } catch (error) {
+                document.getElementById('queueList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Failed to load queue</div>';
+            }
+        }
+
+        // Birthday loading function
+        async function loadBirthdays() {
+            try {
+                const response = await authenticatedFetch('/api/birthdays');
+                if (!response) return; // Redirected to login
+                const birthdays = await response.json();
+                const birthdayList = document.getElementById('birthdayList');
+                
+                if (birthdays.length === 0) {
+                    birthdayList.innerHTML = '<div style="text-align: center; color: #6b7280; padding: 20px;">No birthdays added yet</div>';
+                    return;
+                }
+                
+                const html = birthdays.map(birthday => {
+                    const birthdayDate = new Date(birthday.birthday).toLocaleDateString();
+                    const customMessageBadge = birthday.customMessage ? '<span style="background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 4px;">✓ Custom Message</span>' : '';
+                    return `
+                        <div class="birthday-item">
+                            <div style="flex: 1;">
+                                <div style="font-weight: 500;">${birthday.name} ${customMessageBadge}</div>
+                                <div style="font-size: 12px; color: #6b7280;">${birthday.phone} • ${birthdayDate} • ${birthday.gender} • ${birthday.relationship}</div>
+                                ${birthday.customMessage ? `<div style="font-size: 11px; color: #94a3b8; margin-top: 4px; font-style: italic;">💬 "${birthday.customMessage.substring(0, 60)}${birthday.customMessage.length > 60 ? '...' : ''}"</div>` : ''}
+                            </div>
+                            <button onclick="deleteBirthday('${birthday.id}')" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete</button>
+                        </div>
+                    `;
+                }).join('');
+                
+                birthdayList.innerHTML = html;
+            } catch (error) {
+                document.getElementById('birthdayList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Failed to load birthdays</div>';
+            }
+        }
+
+        async function deleteBirthday(id) {
+            if (!confirm('Are you sure you want to delete this birthday?')) return;
+            
+            try {
+                const response = await authenticatedFetch(`/api/birthdays/${id}`, { method: 'DELETE' });
+                if (!response) return; // Redirected to login
+                const result = await response.json();
+                if (result.success) {
+                    loadBirthdays();
+                } else {
+                    alert('Failed to delete birthday');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        }
+
+
+        // VCF Contact Import
+        document.getElementById('importVcfBtn').addEventListener('click', async () => {
+            const vcfFile = document.getElementById('vcfImportFile').files[0];
+            if (!vcfFile) {
+                alert('Please select a VCF file to import.');
+                return;
+            }
+
+            const importBtn = document.getElementById('importVcfBtn');
+            const originalText = importBtn.textContent;
+            importBtn.disabled = true;
+            importBtn.textContent = '⏳ Importing...';
+
+            const formData = new FormData();
+            formData.append('vcf', vcfFile);
+
+            try {
+                const response = await authenticatedFetch('/api/contacts/import-vcf', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response) return; // Redirected
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(`✅ Import successful! ${result.message}`);
+                    document.getElementById('vcfImportFile').value = ''; // Clear file input
+                } else {
+                    alert(`❌ Import failed: ${result.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                alert('❌ Network error during import: ' + error.message);
+            } finally {
+                importBtn.disabled = false;
+                importBtn.textContent = originalText;
+            }
+        });
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQueue();
+            loadBirthdays();
+            updateConnectionStatus();
+            
+            // Set default send time to 1 hour from now
+            const now = new Date();
+            now.setHours(now.getHours() + 1);
+            document.getElementById('sendAt').value = now.toISOString().slice(0, 16);
+            
+            // Update last sync time
+            document.getElementById('lastSync').textContent = new Date().toLocaleString();
+        });
+
+        // Logout handler
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            if (!confirm('Are you sure you want to logout?')) return;
+            
+            try {
+                const response = await fetch('/api/auth/logout', { method: 'POST' });
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = '/login.html';
+                } else {
+                    alert('Logout failed');
+                }
+            } catch (error) {
+                alert('Network error');
+            }
+        });
+    </script>
+</body>
+</html>
