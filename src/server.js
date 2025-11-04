@@ -1,10 +1,6 @@
 import 'dotenv/config';
 import express from "express";
-import session from "express-session";
-import FileStore from "session-file-store";
 
-const FileStoreInstance = FileStore(session);
-import bcrypt from "bcryptjs";
 import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -40,58 +36,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new SocketIOServer(server, { cors: { origin: "*" } });
 
-// Password configuration (change this!)
-const APP_PASSWORD = process.env.APP_PASSWORD || "admin123"; // Change this password!
-const PASSWORD_HASH = bcrypt.hashSync(APP_PASSWORD, 10);
-const SESSION_SECRET = process.env.SESSION_SECRET || "wasender-session-secret-2024"; // Fixed secret for development
 
-// Session configuration
-app.use(session({
-    store: new FileStoreInstance({
-        path: path.join('/tmp', 'sessions'),
-        ttl: 86400, // 1 day
-        reapInterval: 86400 // 1 day
-    }),
-	secret: SESSION_SECRET,
-	resave: false,
-	saveUninitialized: false,
-	cookie: {
-		secure: true, // Set to true for HTTPS
-		httpOnly: true,
-		maxAge: 24 * 60 * 60 * 1000, // 24 hours
-		sameSite: 'lax' // Add sameSite for better compatibility
-	}
-}));
 
-// Authentication middleware
-function requireAuth(req, res, next) {
-	logger.info("Auth check", { 
-		path: req.path,
-		sessionId: req.sessionID,
-		authenticated: req.session?.authenticated,
-		hasSession: !!req.session,
-		sessionData: req.session
-	});
-	
-	if (req.session && req.session.authenticated) {
-		logger.info("Authentication successful", { path: req.path, sessionId: req.sessionID });
-		return next();
-	}
-	
-	logger.warn("Authentication failed", { 
-		path: req.path, 
-		sessionId: req.sessionID,
-		authenticated: req.session?.authenticated,
-		hasSession: !!req.session
-	});
-	
-	// If it's an API request, return JSON error
-	if (req.path.startsWith('/api/')) {
-		return res.status(401).json({ error: 'Unauthorized' });
-	}
-	// Otherwise redirect to login
-	res.redirect('/login.html');
-}
+
+
+
 
 const DATA_DIR = path.join("/tmp", "data");
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
@@ -251,15 +200,7 @@ app.get('/', (req, res) => {
 	res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
-// Apply authentication to main page and static files
-app.use((req, res, next) => {
-	// Allow login.html and auth API
-	if (req.path === '/login.html' || req.path.startsWith('/api/auth/')) {
-		return next();
-	}
-	// Require auth for everything else
-	requireAuth(req, res, next);
-});
+
 
 // Serve static files (now protected by middleware above)
 app.use(express.static(PUBLIC_DIR));
@@ -452,79 +393,7 @@ io.on("connection", async (socket) => {
 	if (connectionStatus.qr) socket.emit("qr", { qr: connectionStatus.qr });
 });
 
-// ============================================ 
-// AUTHENTICATION API
-// ============================================ 
 
-// Login endpoint
-app.post("/api/auth/login", async (req, res) => {
-	try {
-		const { password } = req.body;
-		
-		logger.info("Login attempt", { 
-			sessionId: req.sessionID,
-			hasPassword: !!password,
-			userAgent: req.get('User-Agent'),
-			origin: req.get('Origin'),
-			referer: req.get('Referer')
-		});
-		
-		if (!password) {
-			return res.status(400).json({ success: false, error: "Password is required" });
-		}
-		
-		// Check password
-		const isValid = bcrypt.compareSync(password, PASSWORD_HASH);
-		
-		if (isValid) {
-			req.session.authenticated = true;
-			req.session.save((err) => {
-				if (err) {
-					logger.error({ err }, "Session save error");
-					return res.status(500).json({ success: false, error: "Session save failed" });
-				}
-				
-				logger.info("Successful login attempt", { 
-					sessionId: req.sessionID,
-					authenticated: req.session.authenticated,
-					sessionData: req.session
-				});
-				res.json({ success: true });
-			});
-		} else {
-			logger.warn("Failed login attempt", { sessionId: req.sessionID });
-			res.status(401).json({ success: false, error: "Invalid password" });
-		}
-	} catch (e) {
-		logger.error({ err: e }, "Login error");
-		res.status(500).json({ success: false, error: "Login failed" });
-	}
-});
-
-// Logout endpoint
-app.post("/api/auth/logout", (req, res) => {
-	req.session.destroy((err) => {
-		if (err) {
-			logger.error({ err }, "Logout error");
-			return res.status(500).json({ success: false, error: "Logout failed" });
-		}
-		res.json({ success: true });
-	});
-});
-
-// Check auth status
-app.get("/api/auth/status", (req, res) => {
-	logger.info("Auth status check", {
-		sessionId: req.sessionID,
-		authenticated: req.session?.authenticated,
-		sessionData: req.session
-	});
-	res.json({
-		authenticated: req.session?.authenticated || false,
-		sessionId: req.sessionID,
-		sessionData: req.session
-	});
-});
 
 // ============================================ 
 // APPLICATION API (All routes below require auth via global middleware)
