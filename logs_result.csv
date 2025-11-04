@@ -1,0 +1,289 @@
+"TimeUTC","timestampInMs","requestPath","requestMethod","requestQueryString","responseStatusCode","requestId","requestUserAgent","level","environment","branch","vercelCache","type","function","host","deploymentDomain","deploymentId","durationMs","region","maxMemoryUsed","memorySize","message","projectId","traceId","sessionId","invocationId","instanceId","concurrency"
+"2025-11-04 04:55:23",1762232123819,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.png","GET","",-1,"6pfwf-1762232122150-a5ed608f30f1","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:23.720 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGETCKJ2JBEY54EBY0M0H","",-1
+"2025-11-04 04:55:22",1762232122188,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.png","GET","",500,"6pfwf-1762232122150-a5ed608f30f1","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1615,"iad1",184,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGETCKJ2JBEY54EBY0M0H","",1
+"2025-11-04 04:55:21",1762232121059,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.png","GET","",-1,"lx8r9-1762232119280-3d015bd9060b","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:20.975 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGC3ZRMKYMXYHBHFVFHSC","",-1
+"2025-11-04 04:55:19",1762232119422,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.png","GET","",500,"lx8r9-1762232119280-3d015bd9060b","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1616,"iad1",184,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGC3ZRMKYMXYHBHFVFHSC","",1
+"2025-11-04 04:55:19",1762232119245,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",-1,"ff7g8-1762232117533-d036930a1461","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:19.143 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGAA4NNPXZNY7HSH123Y1","",-1
+"2025-11-04 04:55:17",1762232117572,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",500,"ff7g8-1762232117533-d036930a1461","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1657,"iad1",190,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KGAA4NNPXZNY7HSH123Y1","",1
+"2025-11-04 04:55:15",1762232115470,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",-1,"jfmzg-1762232113763-d9bce1c7b5fa","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:15.379 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG6MHP8A0TG6EJHGT8104","",-1
+"2025-11-04 04:55:13",1762232113809,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",500,"jfmzg-1762232113763-d9bce1c7b5fa","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1642,"iad1",191,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG6MHP8A0TG6EJHGT8104","",1
+"2025-11-04 04:55:12",1762232112712,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",-1,"jx9jt-1762232111036-9a0692ecd5d4","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:12.621 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG3Z6NM8M2ZACR4C2AN7A","",-1
+"2025-11-04 04:55:11",1762232111078,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",500,"jx9jt-1762232111036-9a0692ecd5d4","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1619,"iad1",189,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG3Z6NM8M2ZACR4C2AN7A","",1
+"2025-11-04 04:55:10",1762232110908,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",-1,"jfmzg-1762232109125-13067b8aa672","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:10.803 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG268GKA2Z7VDCTDBPHES","",-1
+"2025-11-04 04:55:09",1762232109256,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",500,"jfmzg-1762232109125-13067b8aa672","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1629,"iad1",189,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KG268GKA2Z7VDCTDBPHES","",1
+"2025-11-04 04:55:08",1762232108051,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",-1,"6wlkq-1762232106364-d913a61c9923","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:55:07.966 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFZD8ZKGEQ2A8YAC5SKTJ","",-1
+"2025-11-04 04:55:06",1762232106408,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",500,"6wlkq-1762232106364-d913a61c9923","vercel-favicon/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1623,"iad1",187,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFZD8ZKGEQ2A8YAC5SKTJ","",1
+"2025-11-04 04:54:58",1762232098178,"wasender-nu.vercel.app/favicon.ico","GET","",-1,"drxfj-1762232096178-e59c8588b3d3","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:54:58.092 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFNSNMP32DSRRWM66A1QH","",-1
+"2025-11-04 04:54:56",1762232096564,"wasender-nu.vercel.app/favicon.ico","GET","",500,"drxfj-1762232096178-e59c8588b3d3","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1599,"iad1",189,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFNSNMP32DSRRWM66A1QH","",1
+"2025-11-04 04:54:55",1762232095928,"wasender-nu.vercel.app/","GET","",-1,"h2n7l-1762232093901-ed11b1626c40","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:54:55.839 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFKHXC9K8MFVYSG9CMVK5","",-1
+"2025-11-04 04:54:54",1762232094269,"wasender-nu.vercel.app/","GET","",500,"h2n7l-1762232093901-ed11b1626c40","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1635,"iad1",191,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96KFKHXC9K8MFVYSG9CMVK5","",1
+"2025-11-04 04:42:43",1762231363529,"wasender-nu.vercel.app/favicon.ico","GET","",-1,"9w9dl-1762231361527-0d1d3918eaba","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:43.437 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JS89W2714RSQMQT8N1KAK","",-1
+"2025-11-04 04:42:41",1762231361852,"wasender-nu.vercel.app/favicon.ico","GET","",500,"9w9dl-1762231361527-0d1d3918eaba","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1657,"iad1",187,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JS89W2714RSQMQT8N1KAK","",1
+"2025-11-04 04:42:41",1762231361273,"wasender-nu.vercel.app/","GET","",-1,"fvn7p-1762231358987-75babe511d4a","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:41.180 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JS62N61VD44BV97PESKXE","",-1
+"2025-11-04 04:42:39",1762231359573,"wasender-nu.vercel.app/","GET","",500,"fvn7p-1762231358987-75babe511d4a","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0","error","production","main","","lambda","/src/server.js","wasender-nu.vercel.app","wasender-nu.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1684,"iad1",192,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JS62N61VD44BV97PESKXE","",1
+"2025-11-04 04:42:26",1762231346844,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",-1,"7b7cl-1762231345133-5ff354490763","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:26.754 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRR0MSNVES2J0DVSTS46S","",-1
+"2025-11-04 04:42:26",1762231346452,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",-1,"d8fg4-1762231344953-eb5222829767","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:26.362 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRQV1NF30PG23G9AX5JNT","",-1
+"2025-11-04 04:42:25",1762231345172,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",500,"7b7cl-1762231345133-5ff354490763","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1657,"iad1",191,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRR0MSNVES2J0DVSTS46S","",1
+"2025-11-04 04:42:25",1762231345006,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",-1,"sxlf4-1762231343192-cefed74ee98a","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:24.917 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRP6ZF79BFDG1WTYF98K6","",-1
+"2025-11-04 04:42:24",1762231344993,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/favicon.ico","GET","",500,"d8fg4-1762231344953-eb5222829767","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1445,"iad1",185,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRQV1NF30PG23G9AX5JNT","",1
+"2025-11-04 04:42:24",1762231344880,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",-1,"84mfq-1762231343192-b7f2f6efa9f2","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:24.789 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRP8Q3RRSKSHFFXWKKAZS","",-1
+"2025-11-04 04:42:23",1762231343383,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",500,"84mfq-1762231343192-b7f2f6efa9f2","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1482,"iad1",188,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRP8Q3RRSKSHFFXWKKAZS","",1
+"2025-11-04 04:42:23",1762231343327,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",500,"sxlf4-1762231343192-cefed74ee98a","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1651,"iad1",186,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRP6ZF79BFDG1WTYF98K6","",1
+"2025-11-04 04:42:23",1762231343086,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",-1,"jn8c8-1762231339193-aa03e11a0ada","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",-1,"iad1",-1,-1,"Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:21.335 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.
+Warning: connect.session() MemoryStore is not
+designed for a production environment, as it will leak
+memory, and will not scale past a single process.
+[2025-11-04 04:42:22.995 +0000] [32mINFO[39m (4): [36mInitialized Gemini AI with key index 0[39m
+Error: EROFS: read-only file system, open '/var/task/data/status-cache.json'
+    at async open (node:internal/fs/promises:639:25)
+    at async Object.writeFile (node:internal/fs/promises:1213:14)
+    at async writeJson (file:///var/task/src/server.js:210:2)
+    at async ensureDefaults (file:///var/task/src/server.js:215:2)
+    at async file:///var/task/src/server.js:218:1 {
+  errno: -30,
+  code: 'EROFS',
+  syscall: 'open',
+  path: '/var/task/data/status-cache.json'
+}
+Node.js process exited with exit status: 1. The logs above can help with debugging the issue.","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRJE67WDFJ7HY5M99NNRT","",-1
+"2025-11-04 04:42:19",1762231339462,"wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app/","GET","",500,"jn8c8-1762231339193-aa03e11a0ada","vercel-screenshot/1.0","error","production","main","","lambda","/src/server.js","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","wasender-ak8k3kahx-thilinas-projects-ec29316a.vercel.app","dpl_4GCGQ7iRb6Pi66XQRWtJjxspqxxM",1652,"iad1",186,2048,"","prj_efd1MqczGGU4OL89eu8J4bIbSOcf","","","01K96JRJE67WDFJ7HY5M99NNRT","",1

@@ -85,9 +85,9 @@ function requireAuth(req, res, next) {
 	res.redirect('/login.html');
 }
 
-const DATA_DIR = path.join(__dirname, "..", "data");
+const DATA_DIR = path.join("/tmp", "data");
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
-const UPLOADS_DIR = path.join(PUBLIC_DIR, "uploads");
+const UPLOADS_DIR = path.join("/tmp", "uploads");
 
 for (const d of [DATA_DIR, PUBLIC_DIR, UPLOADS_DIR]) {
 	if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
