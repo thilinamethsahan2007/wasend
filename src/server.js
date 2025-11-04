@@ -1033,8 +1033,10 @@ app.delete("/api/birthdays/:id", async (req, res) => {
 
 
 
+
+
 // API endpoint to get Gemini API key status
-app.get("/api/gemini-status", requireAuth, (req, res) => {
+app.get("/api/gemini-status", (req, res) => {
 	try {
 		const status = {
 			currentKeyIndex,
