@@ -1,0 +1,5 @@
+entrypoint = "src/server.js"
+modules = ["replit.nix"]
+
+[run]
+command = ["npm", "start"]
