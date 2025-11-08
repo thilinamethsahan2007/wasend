@@ -35,9 +35,7 @@ async function loadDocument() {
  * @returns {Promise<GoogleSpreadsheetWorksheet>} The worksheet object.
  */
 async function getSheet(title) {
-  if (!doc.sheetsByTitle[title]) {
-    await loadDocument();
-  }
+  await doc.loadInfo(); // Ensure the document info is loaded
   return doc.sheetsByTitle[title];
 }
 

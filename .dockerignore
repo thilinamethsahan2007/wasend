@@ -1,10 +1,14 @@
+# Ignore node_modules, as they will be installed inside the container
 node_modules
-npm-debug.log
+
+# Ignore local data and session files
+data
+*.log
+
+# Ignore environment files and git history
+.env
 .git
 .gitignore
+.dockerignore
+Dockerfile
 README.md
-.env
-data/auth_info_baileys
-data/*.json
-public/uploads/*
-!public/uploads/.gitkeep

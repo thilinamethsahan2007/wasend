@@ -1,36 +1,20 @@
-# Use Node.js LTS version
-FROM node:20-alpine
+# Use an official Node.js runtime as a parent image
+FROM node:20-slim
 
-# Install dependencies for Baileys
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    cairo-dev \
-    jpeg-dev \
-    pango-dev \
-    giflib-dev
-
-# Set working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package files
+# Copy package.json and package-lock.json to leverage Docker cache
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install app dependencies
+RUN npm install --production
 
-# Copy application files
+# Bundle app source
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p data/auth_info_baileys public/uploads
-
-# Expose port
+# Make port 3000 available to the world outside this container
 EXPOSE 3000
 
-# Set environment to production
-ENV NODE_ENV=production
-
-# Start the application
-CMD ["npm", "start"]
+# Define the command to run your app
+CMD [ "node", "src/server.js" ]
