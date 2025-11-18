@@ -49,6 +49,7 @@ async function ensureSheetsExist() {
     'Contacts': ['Name', 'Phone', 'Source'],
     'Birthdays': ['ID', 'Name', 'Phone', 'Birthday', 'Gender', 'Relationship', 'CustomMessage', 'CreatedAt'],
     'Schedule': ['ID', 'BatchID', 'Recipient', 'Caption', 'MediaUrl', 'MediaType', 'SendAt', 'Status', 'Error', 'SentAt'],
+    'Finances': ['ID', 'Date', 'Type', 'Amount', 'Description'],
   };
 
   for (const title in requiredSheets) {

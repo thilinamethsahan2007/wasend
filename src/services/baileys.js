@@ -9,6 +9,7 @@ import utc from "dayjs/plugin/utc.js";
 import timezone from "dayjs/plugin/timezone.js";
 import { nanoid } from "nanoid";
 import QRCode from "qrcode";
+import fetch from 'node-fetch';
 import { GoogleGenAI } from "@google/genai";
 import makeWASocket, { fetchLatestBaileysVersion, DisconnectReason, jidNormalizedUser, useMultiFileAuthState } from "@whiskeysockets/baileys";
 
@@ -36,6 +37,7 @@ let freezeLastSeen = true;
 let lastSeenUpdatedAt = null;
 let isConnecting = false;
 let startTime = Date.now();
+let userSelections = {};
 
 let genAI = null;
 
@@ -145,9 +147,114 @@ export async function startBaileys(io, clearAuth = false) {
 			const msg = m.messages?.[0];
 			if (!msg) return;
 			const from = msg.key?.remoteJid || "";
+			const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
+
+			// Handle movie selection reply
+			if (userSelections[from] && userSelections[from].type === 'movie' && /^[1-3]$/.test(messageText.trim())) {
+				const selectionIndex = parseInt(messageText.trim(), 10) - 1;
+				const searchResults = userSelections[from].results;
+			
+				if (selectionIndex >= 0 && selectionIndex < searchResults.length) {
+					const selectedMovie = searchResults[selectionIndex];
+					const response = `🎬 Here is the link for ${selectedMovie.title}:\nhttps://vidsrc.cc/v3/embed/movie/${selectedMovie.id}?autoPlay=false`;
+					await sock.sendMessage(from, { text: response });
+					delete userSelections[from];
+				} else {
+					// This case should not be reached due to regex, but as a fallback.
+					await sock.sendMessage(from, { text: "Invalid selection. Please send a number from 1 to 3." });
+				}
+				return; // Stop further processing
+			}
+
+			// Handle TV show selection conversation
+			if (userSelections[from] && userSelections[from].type === 'tv') {
+				const selection = messageText.trim();
+				const currentState = userSelections[from];
+				const isNumeric = /^\d+$/.test(selection);
+
+				// Only process numeric replies to avoid loops from the bot's own messages.
+				if (!isNumeric) {
+					return; // Not a numeric reply, so ignore it.
+				}
+
+				try {
+					if (currentState.step === 'show_selection') {
+						const selectionIndex = parseInt(selection, 10) - 1;
+						if (selectionIndex >= 0 && selectionIndex < currentState.results.length) {
+							const selectedShow = currentState.results[selectionIndex];
+
+							// Fetch show details to get season list
+							const detailsUrl = `https://api.themoviedb.org/3/tv/${selectedShow.id}?api_key=${process.env.TMDB_API_KEY}`;
+							const detailsResponse = await fetch(detailsUrl);
+							const showDetails = await detailsResponse.json();
+
+							userSelections[from] = {
+								...currentState,
+								step: 'season_selection',
+								selectedShow: showDetails,
+							};
+
+							let seasonList = `You selected *${showDetails.name}*. Please select a season:\n\n`;
+							showDetails.seasons.forEach(season => {
+								if (season.season_number === 0 && (season.name === "Specials" || season.name === "Extras")) return;
+								seasonList += `*Season ${season.season_number}* (${season.episode_count} episodes)\n`;
+							});
+							seasonList += "\nPlease reply with the season number you want.";
+							await sock.sendMessage(from, { text: seasonList });
+						} else {
+							await sock.sendMessage(from, { text: "Invalid selection. Please send a number from 1 to 3." });
+						}
+
+					} else if (currentState.step === 'season_selection') {
+						const seasonNumber = parseInt(selection, 10);
+						const seasonExists = currentState.selectedShow.seasons.some(s => s.season_number === seasonNumber);
+
+						if (seasonExists) {
+							// Fetch season details to get episode list
+							const seasonDetailsUrl = `https://api.themoviedb.org/3/tv/${currentState.selectedShow.id}/season/${seasonNumber}?api_key=${process.env.TMDB_API_KEY}`;
+							const seasonDetailsResponse = await fetch(seasonDetailsUrl);
+							const seasonDetails = await seasonDetailsResponse.json();
+
+							userSelections[from] = {
+								...currentState,
+								step: 'episode_selection',
+								selectedSeason: seasonDetails,
+							};
+
+							let episodeList = `You selected *Season ${seasonNumber}*. Please select an episode:\n\n`;
+							seasonDetails.episodes.forEach(ep => {
+								episodeList += `*${ep.episode_number}. ${ep.name}*\n`;
+							});
+							episodeList += "\nPlease reply with the episode number you want.";
+							await sock.sendMessage(from, { text: episodeList });
+
+						} else {
+							await sock.sendMessage(from, { text: "Invalid season number. Please try again." });
+						}
+
+					} else if (currentState.step === 'episode_selection') {
+						const episodeNumber = parseInt(selection, 10);
+						const episodeExists = currentState.selectedSeason.episodes.some(e => e.episode_number === episodeNumber);
+
+						if (episodeExists) {
+							const showId = currentState.selectedShow.id;
+							const seasonNum = currentState.selectedSeason.season_number;
+							const link = `📺 Here is your link:\nhttps://vidsrc.cc/v3/embed/tv/${showId}?s=${seasonNum}&e=${episodeNumber}`;
+							await sock.sendMessage(from, { text: link });
+							delete userSelections[from]; // End of conversation
+						} else {
+							await sock.sendMessage(from, { text: "Invalid episode number. Please try again." });
+						}
+					}
+				} catch (e) {
+					logger.error({ err: e }, "Failed during TV show selection process");
+					await sock.sendMessage(from, { text: "❌ An error occurred. Please start over." });
+					delete userSelections[from];
+				}
+				return; // Stop further processing
+			}
 
 			if (msg.key?.fromMe && from !== "status@broadcast") {
-				const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
 				if (messageText.startsWith(".")) {
 					await handleCommand(msg, messageText);
 					return;
@@ -156,7 +263,6 @@ export async function startBaileys(io, clearAuth = false) {
 
 			// Generate and emit smart replies
 			if (!msg.key?.fromMe && (msg.message?.conversation || msg.message?.extendedTextMessage?.text)) {
-				const messageText = msg.message?.conversation || msg.message?.extendedTextMessage?.text;
 				const suggestions = await generateReplySuggestions(messageText);
 				io.emit("ai:reply-suggestions", { suggestions });
 			}
@@ -281,32 +387,125 @@ async function handleCommand(msg, commandText) {
 			case ".help":
 				response = `🤖 *WaSender Bot Commands*
 
+*Finance Commands:*
+.got <amount> <category> <description>
+.spent <amount> <category> <description>
+.report [period] [category]
+
 *Basic Commands:*
-.help - Show this help message
-.status - Check bot status
-.time - Get current time (Sri Lanka)
-.uptime - Bot uptime
+.help, .status, .time, .uptime
 
-*Schedule Commands:*
-.schedule list - List pending messages
-.schedule clear - Clear all pending messages
-.schedule count - Count pending messages
-
-*Birthday Commands:*
-.birthdays list - List all birthdays
-.birthdays today - Show today's birthdays
-.birthdays count - Count total birthdays
-
-*System Commands:*
-.logs - Show recent logs
-.restart - Restart bot connection
-.disconnect - Disconnect bot
+*Other Commands:*
+.schedule, .birthdays, .logs, .restart, .disconnect
 
 *Examples:*
-.schedule list
-.birthdays today
-.time`;
+.got 5000 salary monthly salary
+.spent 15.50 food lunch
+.report this_month food`;
 				break;
+
+			case ".got":
+			case ".spent":
+				const type = cmd === ".got" ? "Income" : "Expense";
+				const amountStr = args[0];
+				const category = args[1];
+				const description = args.slice(2).join(" ");
+				const amount = parseFloat(amountStr);
+
+				if (isNaN(amount) || !category || !description) {
+					response = `❓ Invalid format. Use:\n${cmd} <amount> <category> <description>\nExample: ${cmd} 15.50 food lunch with friends`;
+				} else {
+					try {
+						const sheet = await getSheet('Finances');
+						await sheet.addRow({
+							ID: nanoid(),
+							Date: dayjs().tz("Asia/Colombo").toISOString(),
+							Type: type,
+							Amount: amount,
+							Category: category,
+							Description: description,
+						});
+						response = `✅ ${type} of ${amount} (${category}) for "${description}" logged successfully.`;
+					} catch (e) {
+						logger.error({ err: e }, "Failed to log transaction to Google Sheet");
+						response = `❌ Failed to log transaction. Please ensure the 'Finances' sheet is set up correctly.`;
+					}
+				}
+				break;
+
+			case ".report":
+				try {
+					const period = args[0] || 'this_month';
+					const categoryFilter = args[1];
+					let startDate;
+					const now = dayjs.tz(undefined, "Asia/Colombo");
+
+					if (period === 'today') {
+						startDate = now.startOf('day');
+					} else if (period === 'this_week') {
+						startDate = now.startOf('week');
+					} else { // default to this_month
+						startDate = now.startOf('month');
+					}
+
+					const sheet = await getSheet('Finances');
+					const rows = await sheet.getRows();
+
+					let totalIncome = 0;
+					let totalExpenses = 0;
+                    const categoryTotals = {};
+
+					for (const row of rows) {
+						const rowDate = dayjs(row.get('Date'));
+						if (rowDate.isAfter(startDate)) {
+							const type = row.get('Type');
+							const amount = parseFloat(row.get('Amount'));
+                            const category = row.get('Category') || 'Uncategorized';
+
+							if (!isNaN(amount)) {
+                                if (categoryFilter && category.toLowerCase() !== categoryFilter.toLowerCase()) {
+                                    continue;
+                                }
+
+								if (type === 'Income') {
+									totalIncome += amount;
+								} else if (type === 'Expense') {
+									totalExpenses += amount;
+                                    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+								}
+							}
+						}
+					}
+
+					const netBalance = totalIncome - totalExpenses;
+					const balanceSign = netBalance >= 0 ? '+' : '-';
+					let periodText = period.replace('_', ' ');
+                    if (categoryFilter) {
+                        periodText += ` in '${categoryFilter}'`;
+                    }
+
+
+					response = `📊 *Finance Report (${periodText})*
+
+💰 *Total Income:* ${totalIncome.toFixed(2)}
+💸 *Total Expenses:* ${totalExpenses.toFixed(2)}
+---
+⚖️ *Net Balance:* ${balanceSign}${Math.abs(netBalance).toFixed(2)}`;
+
+                    if (!categoryFilter && Object.keys(categoryTotals).length > 0) {
+                        response += `\n\n*Expense Breakdown:*`;
+                        const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+                        for (const [cat, total] of sortedCategories) {
+                            response += `\n- ${cat}: ${total.toFixed(2)}`;
+                        }
+                    }
+
+				} catch (e) {
+					logger.error({ err: e }, "Failed to generate finance report");
+					response = `❌ Failed to generate report. Please ensure the 'Finances' sheet is set up correctly.`;
+				}
+				break;
+
 				
 			case ".status":
 				const isConnected = connectionStatus.connected;
@@ -442,7 +641,92 @@ QR Code: ${connectionStatus.qr ? "Available" : "Not available"}`;
 					}
 				}, 1000);
 				break;
-				
+			
+			case ".movie":
+				const movieName = args.join(" ");
+				if (!movieName) {
+					response = "❓ Please provide a movie name. Usage: .movie <movie_name>";
+				} else {
+					const tmdbApiKey = process.env.TMDB_API_KEY;
+					if (!tmdbApiKey) {
+						response = "❌ TMDB API key is not set. Please add it to your .env file.";
+					} else {
+						try {
+							const searchUrl = `https://api.themoviedb.org/3/search/movie?api_key=${tmdbApiKey}&query=${encodeURIComponent(movieName)}`;
+							console.log(`TMDB Search URL: ${searchUrl}`);
+							const tmdbResponse = await fetch(searchUrl);
+							const tmdbData = await tmdbResponse.json();
+							console.log('TMDB Response:', JSON.stringify(tmdbData, null, 2));
+							if (tmdbData.results && tmdbData.results.length > 0) {
+								const top3Movies = tmdbData.results.slice(0, 3);
+								userSelections[chatId] = {
+									type: 'movie',
+									results: top3Movies
+								};
+								
+								let movieList = "🎬 Here are the top 3 results:\n\n";
+								top3Movies.forEach((movie, index) => {
+									movieList += `*${index + 1}. ${movie.title}* (${movie.release_date?.substring(0, 4) || 'N/A'})\n`;
+									movieList += `⭐ Rating: ${movie.vote_average.toFixed(1)}/10\n`;
+									movieList += `📝 Plot: ${movie.overview}\n\n`;
+								});
+
+								movieList += "Please reply with the number of the movie you want.";
+
+								await sock.sendMessage(chatId, { text: movieList });
+							} else {
+								response = `😕 Could not find a movie with the name "${movieName}".`;
+							}
+						} catch (e) {
+							logger.error({ err: e }, "Failed to fetch movie from TMDB");
+							response = "❌ An error occurred while fetching movie information.";
+						}
+					}
+				}
+				break;
+			
+			case ".tv":
+				const showName = args.join(" ");
+				if (!showName) {
+					response = "❓ Please provide a TV show name. Usage: .tv <show_name>";
+				} else {
+					const tmdbApiKey = process.env.TMDB_API_KEY;
+					if (!tmdbApiKey) {
+						response = "❌ TMDB API key is not set. Please add it to your .env file.";
+					} else {
+						try {
+							const searchUrl = `https://api.themoviedb.org/3/search/tv?api_key=${tmdbApiKey}&query=${encodeURIComponent(showName)}`;
+							const tmdbResponse = await fetch(searchUrl);
+							const tmdbData = await tmdbResponse.json();
+							
+							if (tmdbData.results && tmdbData.results.length > 0) {
+								const top3Shows = tmdbData.results.slice(0, 3);
+								userSelections[chatId] = {
+									type: 'tv',
+									step: 'show_selection',
+									results: top3Shows
+								};
+								
+								let showList = "📺 Here are the top 3 results:\n\n";
+								top3Shows.forEach((show, index) => {
+									showList += `*${index + 1}. ${show.name}* (${show.first_air_date?.substring(0, 4) || 'N/A'})\n`;
+									showList += `⭐ Rating: ${show.vote_average.toFixed(1)}/10\n`;
+									showList += `📝 Plot: ${show.overview}\n\n`;
+								});
+
+								showList += "Please reply with the number of the show you want.";
+								await sock.sendMessage(chatId, { text: showList });
+							} else {
+								response = `😕 Could not find a TV show with the name "${showName}".`;
+							}
+						} catch (e) {
+							logger.error({ err: e }, "Failed to fetch TV show from TMDB");
+							response = "❌ An error occurred while fetching TV show information.";
+						}
+					}
+				}
+				break;
+
 			default:
 				response = `❓ Unknown command: ${cmd}\n\nType .help for available commands.`;
 		}
