@@ -402,6 +402,53 @@ app.post("/api/birthdays/preview-message", async (req, res) => {
     }
 });
 
+app.get("/api/finance/analysis", async (req, res) => {
+    try {
+        const sheet = await getSheet('Finances');
+        const rows = await sheet.getRows();
+        const now = dayjs.tz(undefined, "Asia/Colombo");
+        const startOfMonth = now.startOf('month');
+
+        let totalIncome = 0;
+        let totalExpenses = 0;
+        const categoryTotals = {};
+
+        for (const row of rows) {
+            const rowDate = dayjs(row.get('Date'));
+            if (rowDate.isAfter(startOfMonth)) {
+                const type = row.get('Type');
+                const amount = parseFloat(row.get('Amount'));
+                const category = row.get('Category') || 'Uncategorized';
+
+                if (!isNaN(amount)) {
+                    if (type === 'Income') {
+                        totalIncome += amount;
+                    } else if (type === 'Expense') {
+                        totalExpenses += amount;
+                        categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+                    }
+                }
+            }
+        }
+
+        const categoryBreakdown = Object.entries(categoryTotals)
+            .map(([name, total]) => ({ name, total }))
+            .sort((a, b) => b.total - a.total);
+
+        res.json({
+            totalIncome: totalIncome.toFixed(2),
+            totalExpenses: totalExpenses.toFixed(2),
+            netBalance: (totalIncome - totalExpenses).toFixed(2),
+            categoryBreakdown,
+            month: now.format("MMMM YYYY"),
+        });
+
+    } catch (e) {
+        logger.error({ err: e }, "Failed to generate finance analysis");
+        res.status(500).json({ error: "Failed to generate finance analysis" });
+    }
+});
+
 
 // Socket.IO connection
 io.on("connection", (socket) => {

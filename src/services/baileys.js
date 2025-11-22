@@ -31,7 +31,7 @@ let connectionStatus = { connected: false, lastDisconnect: null, qr: null, devic
 let sendingInProgress = false;
 let autoViewStatus = process.env.AUTO_VIEW_STATUS !== "false";
 let autoReactStatus = process.env.AUTO_REACT_STATUS === "true";
-let reactionEmoji = process.env.REACTION_EMOJI || "❤️,💕,😍,👍";
+let reactionEmoji = process.env.REACTION_EMOJI || "🩵,🧡,💙,💚,💛,❤️";
 let freezeLastSeen = true;
 let lastSeenUpdatedAt = null;
 let isConnecting = false;
@@ -281,32 +281,125 @@ async function handleCommand(msg, commandText) {
 			case ".help":
 				response = `🤖 *WaSender Bot Commands*
 
+*Finance Commands:*
+.got <amount> <category> <description>
+.spent <amount> <category> <description>
+.report [period] [category]
+
 *Basic Commands:*
-.help - Show this help message
-.status - Check bot status
-.time - Get current time (Sri Lanka)
-.uptime - Bot uptime
+.help, .status, .time, .uptime
 
-*Schedule Commands:*
-.schedule list - List pending messages
-.schedule clear - Clear all pending messages
-.schedule count - Count pending messages
-
-*Birthday Commands:*
-.birthdays list - List all birthdays
-.birthdays today - Show today's birthdays
-.birthdays count - Count total birthdays
-
-*System Commands:*
-.logs - Show recent logs
-.restart - Restart bot connection
-.disconnect - Disconnect bot
+*Other Commands:*
+.schedule, .birthdays, .logs, .restart, .disconnect
 
 *Examples:*
-.schedule list
-.birthdays today
-.time`;
+.got 5000 salary monthly salary
+.spent 15.50 food lunch
+.report this_month food`;
 				break;
+
+			case ".got":
+			case ".spent":
+				const type = cmd === ".got" ? "Income" : "Expense";
+				const amountStr = args[0];
+				const category = args[1];
+				const description = args.slice(2).join(" ");
+				const amount = parseFloat(amountStr);
+
+				if (isNaN(amount) || !category || !description) {
+					response = `❓ Invalid format. Use:\n${cmd} <amount> <category> <description>\nExample: ${cmd} 15.50 food lunch with friends`;
+				} else {
+					try {
+						const sheet = await getSheet('Finances');
+						await sheet.addRow({
+							ID: nanoid(),
+							Date: dayjs().tz("Asia/Colombo").toISOString(),
+							Type: type,
+							Amount: amount,
+							Category: category,
+							Description: description,
+						});
+						response = `✅ ${type} of ${amount} (${category}) for "${description}" logged successfully.`;
+					} catch (e) {
+						logger.error({ err: e }, "Failed to log transaction to Google Sheet");
+						response = `❌ Failed to log transaction. Please ensure the 'Finances' sheet is set up correctly.`;
+					}
+				}
+				break;
+
+			case ".report":
+				try {
+					const period = args[0] || 'this_month';
+					const categoryFilter = args[1];
+					let startDate;
+					const now = dayjs.tz(undefined, "Asia/Colombo");
+
+					if (period === 'today') {
+						startDate = now.startOf('day');
+					} else if (period === 'this_week') {
+						startDate = now.startOf('week');
+					} else { // default to this_month
+						startDate = now.startOf('month');
+					}
+
+					const sheet = await getSheet('Finances');
+					const rows = await sheet.getRows();
+
+					let totalIncome = 0;
+					let totalExpenses = 0;
+                    const categoryTotals = {};
+
+					for (const row of rows) {
+						const rowDate = dayjs(row.get('Date'));
+						if (rowDate.isAfter(startDate)) {
+							const type = row.get('Type');
+							const amount = parseFloat(row.get('Amount'));
+                            const category = row.get('Category') || 'Uncategorized';
+
+							if (!isNaN(amount)) {
+                                if (categoryFilter && category.toLowerCase() !== categoryFilter.toLowerCase()) {
+                                    continue;
+                                }
+
+								if (type === 'Income') {
+									totalIncome += amount;
+								} else if (type === 'Expense') {
+									totalExpenses += amount;
+                                    categoryTotals[category] = (categoryTotals[category] || 0) + amount;
+								}
+							}
+						}
+					}
+
+					const netBalance = totalIncome - totalExpenses;
+					const balanceSign = netBalance >= 0 ? '+' : '-';
+					let periodText = period.replace('_', ' ');
+                    if (categoryFilter) {
+                        periodText += ` in '${categoryFilter}'`;
+                    }
+
+
+					response = `📊 *Finance Report (${periodText})*
+
+💰 *Total Income:* ${totalIncome.toFixed(2)}
+💸 *Total Expenses:* ${totalExpenses.toFixed(2)}
+---
+⚖️ *Net Balance:* ${balanceSign}${Math.abs(netBalance).toFixed(2)}`;
+
+                    if (!categoryFilter && Object.keys(categoryTotals).length > 0) {
+                        response += `\n\n*Expense Breakdown:*`;
+                        const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
+                        for (const [cat, total] of sortedCategories) {
+                            response += `\n- ${cat}: ${total.toFixed(2)}`;
+                        }
+                    }
+
+				} catch (e) {
+					logger.error({ err: e }, "Failed to generate finance report");
+					response = `❌ Failed to generate report. Please ensure the 'Finances' sheet is set up correctly.`;
+				}
+				break;
+
 				
 			case ".status":
 				const isConnected = connectionStatus.connected;
