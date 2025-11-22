@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install app dependencies
-RUN npm install --production
+RUN apt-get update && apt-get install -y git && npm install --production
 
 # Bundle app source
 COPY . .
